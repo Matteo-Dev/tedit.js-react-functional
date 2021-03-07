@@ -184,10 +184,22 @@ const Editor = () => {
     const [isTxt, setIsTxt] = useState(false);
     const [isImage, setIsImage] = useState(false);
     const [content, setContent] = useState([]);
+    const [buttonsConfig, setButtonsConfig] = useState({
+        bold: false,
+        italic: false,
+        underline: false,
+    })
     const contentRef = useRef(content);
     const activeNode = useRef();
 
-    const handleTxtClick = (id) => {
+    const findParent = (node) => {
+        console.log(node);
+        if(node.tagName === "SPAN") return node.children[0];
+        else if(node.parentNode.tagName !== "P") return findParent(node.parentNode);
+        return node;
+    }
+
+    const handleTxtClick = (id, node) => {
         let con = contentRef.current;
         setIsTxt(true);
         console.log("### C L I C K ###")
@@ -208,14 +220,15 @@ const Editor = () => {
             default:
                 break;
         }
-        setActiveElement({ id: parseInt(id), style: s, node: activeNode.current});
+        console.log({ id: parseInt(id), style: s, node: findParent(node)})
+        setActiveElement({ id: parseInt(id), style: s, node: findParent(node)});
     }
     const handleKey = (e) => {
 
     }
 
     let init = [
-        <Txt ref={activeNode} key="1" id="1" style="1" type="0" text="Title" handleClick={handleTxtClick} onKeyDown={handleKey}/>,
+        <Txt key="1" id="1" style="1" type="0" text="Title" handleClick={handleTxtClick} onKeyDown={handleKey}/>,
         <Txt key="2" id="2" style="0" type="0" text="Type something" handleClick={handleTxtClick} onKeyDown={handleKey}/>
     ]
 
@@ -265,11 +278,21 @@ const Editor = () => {
         setContent(init);
     }, [])
 
+    useEffect(()=>{
+        if(activeElement.node){ 
+            if(activeElement.node.tagName === "B") setButtonsConfig({bold: true, italic: false, underline: false});
+            else if(activeElement.node.tagName === "I") setButtonsConfig({italic: true, bold: false, underline: false});
+            else if(activeElement.node.tagName === "U") setButtonsConfig({underline: true, bold: false, italic: false});
+            else setButtonsConfig({bold: false, italic: false, underline: false});
+        }
+    }, [activeElement])
+
     const openHM = () => {
         setIsTxt(false);
         setIsImage(false);
     }
 
+    // ### DROPDOWNITEMS CONFIG ###
     const textStyles=[
         {
             label: "Paragraph",
@@ -293,11 +316,55 @@ const Editor = () => {
         },
     ]
 
+    // ### BUTTON EVENT HANDLER ###
+    const handleBold = e => {
+        console.log("BOLR")
+        document.designMode = "on";
+        document.execCommand("bold");
+    }
+    const handleItalic = e => {
+        document.designMode = "on";
+        document.execCommand("italic");
+    }
+    const handleUnderline = e => {
+        document.designMode = "on";
+        document.execCommand("underline");
+    }
+
+    // ### BUTTONS CONFIG ###
+    let i=0;
+    const createButtons = obj => {
+        if(obj.type === 0) return <Button key={i+=1} style="material-icons-outlined i-btn" handleClick={obj.listener} clicked={buttonsConfig[obj.apiName]}>{obj.img}</Button>;
+        else return <FileInputButton key={i+=1} style="i-btn material-icons-outlined" onInput={obj.listener}>{obj.img}</FileInputButton>
+    }
+
+    let txtStyleButtons = [
+        {
+            type: 0,
+            img: "format_bold",
+            apiName: "bold",
+            listener: handleBold,
+        },
+        {
+            type: 0,
+            img: "format_italic",
+            apiName: "italic",
+            listener: handleItalic, 
+        },
+        {
+            type: 0,
+            img: "format_underline",
+            apiName: "underline",
+            listener: handleUnderline, 
+        }
+    ].map(createButtons);
+
     return(
         <React.Fragment>
             {isTxt && <Navbar>
                 <HeaderM>Text</HeaderM>
                 <DropDown key={Date.now()*Math.random()} items={textStyles} al={activeElement.style}/>
+                <div id="2" className="fl-ac ml-5">{txtStyleButtons}</div>
             </Navbar>}
             {!isTxt && <Navbar>
                 <HeaderM>Add</HeaderM>

@@ -1,8 +1,8 @@
 import React from "react";
 
-const Button = ({ style, handleClick, children}) => {
+const Button = ({ style, handleClick, children, clicked}) => {
     return (
-        <span className={style} onClick={handleClick}>{children}</span>
+        <span className={(clicked)?style+"-clicked":style } onClick={handleClick}>{children}</span>
     );
 }
 

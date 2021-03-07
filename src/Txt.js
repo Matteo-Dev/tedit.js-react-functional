@@ -46,8 +46,12 @@ const Txt = ({ style, type, id, text, txtAlign, handleClick, handleKey }) => {
 
     useEffect(()=>{
         nodeRef.current.focus();
-        setTimeout(()=>handleClick(id), 1)
-    }, [])
+        setTimeout(()=>handleClick(id, nodeRef.current.children[0]), 1)
+    }, []);
+
+    useEffect(()=>{
+        console.log("TXT WAS RENDERED");
+    })
 
     return (
         <span 
@@ -55,10 +59,11 @@ const Txt = ({ style, type, id, text, txtAlign, handleClick, handleKey }) => {
             className={"ta "+ t} 
             style={ta} 
             contentEditable="true" 
+            suppressContentEditableWarning={true}
             spellCheck="false" 
             onKeyDown={handleKey} 
-            onClick={() => {
-                handleClick(id);
+            onClick={(e) => {
+                handleClick(id, e.target);
             }}
         ><p className="pa" placeholder={ph}></p></span>
 

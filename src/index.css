@@ -465,6 +465,31 @@ h1{
     border: solid 2px #dedede;
     background-color: #dedede;
 }
+.i-btn-clicked{
+    padding: 3px;
+    padding-left: 4px;
+    padding-right: 4px;
+
+    font-size: 20px !important;
+
+    border-radius: 2px;
+    margin-right: 5px;
+
+    background: none;
+    border: solid 2px #ffffff;
+
+    color: #343a40;
+
+    height: fit-content;
+    width: fit-content;
+    user-select: none;
+
+    min-width: 5px;
+    max-height: 31px;
+
+    border: solid 2px #dedede;
+    background-color: #dedede;
+}
 #bBold{
     font-weight: bold;
 }
